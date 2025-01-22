@@ -1,0 +1,7 @@
+{-# OPTIONS --safe --lossy-unification #-}
+module Cubical.Algebra.ChainComplex.Natindexed where
+
+open import Cubical.Structures.Successor
+open import Cubical.Algebra.ChainComplex.Base
+
+open CC ℕ+ public
