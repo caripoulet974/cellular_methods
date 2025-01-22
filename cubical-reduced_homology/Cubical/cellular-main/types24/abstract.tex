@@ -1,0 +1,270 @@
+% easychair.tex,v 3.5 2017/03/15
+
+\documentclass{easychair}
+%\documentclass[EPiC]{easychair}
+%\documentclass[EPiCempty]{easychair}
+%\documentclass[debug]{easychair}
+%\documentclass[verbose]{easychair}
+%\documentclass[notimes]{easychair}
+%\documentclass[withtimes]{easychair}
+%\documentclass[a4paper]{easychair}
+%\documentclass[letterpaper]{easychair}
+
+\usepackage{amsmath, amsfonts, amsthm , mathtools , bbold, float}
+
+\usepackage{tikz}
+\usepackage{tikz-cd}
+\usepackage{mathpartir}
+\usepackage[nameinlink,capitalize,noabbrev]{cleveref}
+\usepackage{quiver}
+\usepackage{xspace}
+\usepackage{xcolor}
+\usepackage{bbm}
+\usepackage{breakurl}
+\usepackage{bbding}
+\hypersetup{pdfborder={0 0 100}}
+\usepackage{lipsum}
+%\usepackage{biblatex}
+%\bibliographystyle{unsrt}
+%% \usepackage[backend=biber,style=alphabetic,sorting=nty,giveninits]{biblatex} % Bibliography management
+%% \addbibresource{refs.bib}
+
+\usepackage{textcomp}
+\usepackage{xspace}
+\usepackage{url}
+\usepackage{multirow}
+\usepackage{hhline}
+\usepackage{pifont}
+\usetikzlibrary{arrows,matrix,decorations.pathmorphing,
+  decorations.markings, calc, backgrounds}
+\usepackage{mathpartir}
+\usepackage{microtype}
+
+\DisableLigatures[-]{family=tt*}
+
+\input{macros}
+
+
+\usepackage{doc}
+
+% use this if you have a long article and want to create an index
+% \usepackage{makeidx}
+
+% In order to save space or manage large tables or figures in a
+% landcape-like text, you can use the rotating and pdflscape
+% packages. Uncomment the desired from the below.
+%
+% \usepackage{rotating}
+% \usepackage{pdflscape}
+
+% Some of our commands for this guide.
+%
+\newcommand{\easychair}{\textsf{easychair}}
+\newcommand{\miktex}{MiK{\TeX}}
+\newcommand{\texniccenter}{{\TeX}nicCenter}
+\newcommand{\makefile}{\texttt{Makefile}}
+\newcommand{\latexeditor}{LEd}
+
+%\makeindex
+
+%% Front Matter
+%%
+% Regular title as in the article class.
+%
+\title{A Constructive Cellular Approximation Theorem in HoTT}
+
+% Authors are joined by \and. Their affiliations are given by \inst, which indexes
+% into the list defined using \institute
+%
+\author{
+Axel Ljungström \and Loïc Pujet}
+
+% Institutes for affiliations are also joined by \and,
+\institute{
+  {
+  Stockholm University,
+  Stockholm, Sweden
+  }
+ }
+
+%  \authorrunning{} has to be set for the shorter version of the authors' names;
+% otherwise a warning will be rendered in the running heads. When processed by
+% EasyChair, this command is mandatory: a document without \authorrunning
+% will be rejected by EasyChair
+
+\authorrunning{Axel Ljungström and Loïc Pujet}
+
+% \titlerunning{} has to be set to either the main title or its shorter
+% version for the running heads. When processed by
+% EasyChair, this command is mandatory: a document without \titlerunning
+% will be rejected by EasyChair
+\titlerunning{A Constructive Cellular Approximation Theorem in HoTT}
+
+
+\begin{document}
+
+\maketitle
+
+At the heart of homotopy type theory (HoTT) is the analogy between types and spaces.
+%
+This permits the use of type theory as a language for algebraic topology, \ie for the study
+of spaces and maps between spaces up to homotopy by means of algebraic invariants, such as homotopy groups~\cite{HoTT13,Brunerie16,Buchholtz2016TheCC} and (co)homology groups~\cite{LicataFinster14,CavalloMsc15,BuchholtzFavonia18,FlorisPhd,graham18,BLM22,christensen2020hurewicz,LLM23,LM24}.
+%
+Although the methods of algebraic topology apply to very general notions of spaces, the theory is
+often easier to develop in the context of a more restricted and well-behaved class:
+CW complexes.
+%
+As such, it is natural to define CW complexes in the language of HoTT,
+in order to obtain a notion of spaces which is easier to work with than arbitrary types.
+
+In this work, we revisit the definition of CW complexes given by Buchholtz and
+Favonia~\cite{BuchholtzFavonia18} and develop their theory.
+%
+In particular, we focus on the \emph{cellular approximation theorem}, a cornerstone result in
+algebraic topology which says that arbitrary maps between CW complexes and their homotopies may be
+approximated by maps and homotopies which respect the cellular structure~\cite[chap. 10]{May1999}.
+%
+We give a constructive proof of the theorem which relies heavily on the (provable) principle of
+finite choice%
+\footnote{The proof has been fully formalised in \CubicalAgda, and is available at \url{https://github.com/loic-p/cellular/blob/main/summary.agda}}%
+, and we discuss the extent to which the theorem can be strengthened while remaining constructive.
+%
+The work we present here is intended to serve as a foundation for a larger
+project on the development of cellular homology with Anders Mörtberg.
+
+In order to define CW complexes, we will need the following definition:
+
+\begin{definition}[CW skeleta]
+  An \textbf{ordered CW skeleton} is an infinite sequence of types $$\varnothing = C_{-1} \xrightarrow{\iota_{-1}} C_0 \xrightarrow{\iota_{0}} C_1 \xrightarrow{\iota_{1}} \dots$$
+  equipped with maps $\alpha : \sphere{n} \times A_n \to C_n$ where $A_n$ is equivalent to $\mathsf{Fin}(k_n)$ for some $k_n : \mathbb{N}$ and the following square is a pushout:
+  \[
+\begin{tikzcd}[ampersand replacement=\&]
+	{\sphere{n} \times A_n} \& {A_n} \\
+	{C_n} \& {C_{n+1}}
+	\arrow[from=1-1, to=1-2]
+	\arrow["{\alpha_n}"', from=1-1, to=2-1]
+	\arrow["{\iota_n}"', from=2-1, to=2-2]
+	\arrow[from=1-2, to=2-2]
+	\arrow["\lrcorner"{anchor=center, pos=0.125, rotate=180}, draw=none, from=2-2, to=1-1]
+\end{tikzcd}
+\]
+An \textbf{unordered CW skeleton} is defined similarly, but each $A_n$ is only assumed to be merely
+finite, \ie for all \( n \) we have a proof of \( \| A_n \simeq \mathsf{Fin}(k_n) \|_{-1} \).
+\end{definition}
+
+The pushout condition ensures that the \( (n + 1) \)-skeleton \( C_{n+1} \) is obtained by attaching
+a finite number of \( n \)-dimensional cells to the \( n \)-skeleton \( C_n \). In the case of an
+ordered CW skeleton, each type of cells is equipped with an order inherited from \( \mathsf{Fin}(k_n) \),
+hence the name.
+%
+Given a CW skeleton \( C_{\bullet} \), we write \( C_\infty \) for the colimit of the sequence of
+\( n \)-skeleta, and for any \( n \) we write $\iota_\infty : C_n \to C_\infty$ for the inclusion of
+$C_n$ into the colimit $C_\infty$.
+
+\begin{definition}[CW complexes]
+  A type \( X \) is said to be an ordered (resp. unordered) CW complex if there merely exists an
+  ordered (resp. unordered) CW skeleton \( C_{\bullet} \) such that \( X \) is equivalent to the
+  colimit \( C_\infty \).
+\end{definition}
+
+A map between two CW complexes \( X \) and \( Y \) is simply a map between the underlying types.
+%
+The cellular approximation theorem states that such maps may be approximated by \emph{cellular maps},
+\ie sequences of maps between the \( n \)-skeleta of \( X \) and \( Y \).
+%
+In order to prove this theorem constructively for unordered CW complexes, we need to define finite
+cellular maps:
+
+\begin{definition}[Cellular $m$-maps]
+  Given two CW skeleta $C_\bullet$ and $D_\bullet$, a cellular $m$-map from \( C_\bullet \) to \( D_\bullet \)
+  is a finite sequence of maps $(f_n : C_n \to D_n)_{n \leq m}$ equipped with a family of homotopies
+  $h_n(x) : (\iota_n \circ f_{n})(x) = (f_{n+1} \circ \iota_n)(x)$ for $n < m$.
+\end{definition}
+
+\begin{definition}[Cellular $m$-homotopies]
+  Given two cellular $m$-maps $f_\bullet , g_\bullet : C_\bullet \to D_\bullet$, an
+  $m$-homotopy between \( f_\bullet \) and \( g_\bullet \), denoted $f_\bullet \sim_m g_\bullet$, is a finite sequence of homotopies\linebreak
+  \( (h_n : \iota_n \circ f_n = \iota_n \circ g_n)_{n \leq m} \) such that for \( n < m \) and \( x : C_n \) the following square commutes:
+  \[
+\begin{tikzcd}[ampersand replacement=\&,column sep = 2cm]
+	{(\iota_{n+1} \circ f_{n+1} \circ \iota_n)~x} \& {(\iota_{n+1} \circ g_{n+1} \circ \iota_n)~x} \\
+	{(\iota_{n+1} \circ \iota_n \circ f_n)~x} \& {(\iota_{n+1} \circ \iota_n \circ g_n)~x}
+	\arrow[double equal sign distance, -, double, "{(h_{n+1} \circ \iota_n)(x)}", from=1-1, to=1-2]
+	\arrow[double equal sign distance, -, double, from=1-1, to=2-1]
+	\arrow[double equal sign distance, -, double, "{(\iota_{n+1} \circ h_n)(x)}"', from=2-1, to=2-2]
+	\arrow[double equal sign distance, -, double, from=1-2, to=2-2]
+\end{tikzcd}
+\]
+\end{definition}
+
+\begin{theorem}[Cellular $m$-approximation theorem]\label{thm:main}
+  Given two unordered CW skeleta $C_\bullet,D_\bullet$, a map $f : C_\infty \to  D_\infty$ and
+  $m:\bN$, there merely exists an $m$-cellular map $f_\bullet : C_\bullet \to D_{\bullet}$ such that
+  $\iota_{\infty} \circ f_m = f \circ \iota_{\infty}$.
+\end{theorem}
+
+\begin{theorem}[Cellular $m$-approximation theorem, part 2]\label{thm:p2}
+  Let $C_\bullet,D_\bullet$ be unordered CW skeleta and consider two
+  cellular $m$-maps map $f_\bullet,g_\bullet : C_\bullet \to D_\bullet$ with a
+  such that $f_m = g_m$. In this case, there merely exists a
+  cellular $m$-homotopy $f_\bullet \sim_m g_\bullet$.
+\end{theorem}
+
+\begin{proof}[Sketch of proofs]
+The proof of Theorem~\ref{thm:main} is done by induction on \( m \):
+%
+if we have an \( n \)-approximation of \( f \), we can use the principle of finite choice to obtain
+the mere existence of an \( (n+1) \)-approximation.
+%
+Note that we only approximate \( f \) up to a fixed dimension \( m \), so that the construction
+only needs finitely many calls to finite choice, which is constructively valid~\cite[exercise 3.22]{HoTT13}.
+%
+Theorem~\ref{thm:p2} is proved using the exact same techniques.
+\end{proof}
+
+Although our statements of the cellular approximation theorems are sufficient to develop cellular homology in HoTT~\cite{CellHomology}, they are weaker than their classical counterparts on two
+points.
+%
+Firstly, we only obtain the \emph{mere existence} of an approximation. However, since every
+construction in HoTT has to be homotopy invariant, the untruncated version of Theorem~\ref{thm:main} is actually
+inconsistent: when specialised to the unit type and the circle (which are both CW complexes),
+the untruncated approximation theorem amounts to the contractibility of the circle.
+Therefore, some amount of truncation is required to state the theorem in HoTT.
+%
+Secondly, the classical cellular approximation theorems are stated for \( m = \infty \), while
+ours only provide finite approximations.
+%
+In fact, due to the fundamental reliance of the theorem on finite choice, we conjecture that the
+case \( m = \infty \) is equivalent to the axiom of countable choice, and thus not provable in
+constructive HoTT.
+
+\begin{conjecture}
+  The case \( m = \infty \) of the cellular approximation theorems is not provable in plain HoTT
+  for unordered CW skeleta.
+\end{conjecture}
+
+%% Indeed, we expect that it is equivalent to the possibility of choosing an inhabitant of countably
+%% many types that are merely finite.
+%
+However, in the case of \emph{ordered} CW skeleta, we expect that it is possible to use the order
+on the sets of cells to pick a \emph{minimal} approximation at each stage for some carefully defined
+order. This eschews the need for finite choice and thus we conjecture the following:
+%
+\begin{conjecture}\label{conj1}
+  The cellular approximation theorems hold for $m = \infty$ for ordered CW skeleta.
+\end{conjecture}
+
+
+\label{sect:bib}
+\bibliographystyle{plain}
+%\bibliographystyle{alpha}
+%\bibliographystyle{unsrt}
+%\bibliographystyle{abbrv}
+\bibliography{refs.bib}
+
+%------------------------------------------------------------------------------
+% Index
+%\printindex
+
+%------------------------------------------------------------------------------
+\end{document}
