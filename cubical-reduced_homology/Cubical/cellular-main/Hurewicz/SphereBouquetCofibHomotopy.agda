@@ -1,4 +1,4 @@
-{-# OPTIONS --cubical --lossy-unification #-}
+{-# OPTIONS --cubical --lossy-unification --safe #-}
 module Cubical.cellular-main.Hurewicz.SphereBouquetCofibHomotopy where
 
 open import Cubical.Foundations.Prelude
@@ -77,7 +77,7 @@ open import Cubical.HITs.Wedge
 
 
 open import Cubical.HITs.SphereBouquet.Degree
-open import Cubical.Algebra.AbGroup.Instances.FreeAbGroup as FAB 
+open import Cubical.Algebra.AbGroup.Instances.FreeAbGroup as FAB
 
 open import Cubical.cellular-main.Hurewicz.random
 open import Cubical.cellular-main.Hurewicz.AbPath
@@ -157,7 +157,7 @@ Iso.rightInv (breakOut⋁ {n = suc n}) (inl (inr ((zero , w) , t))) = refl
 Iso.rightInv (breakOut⋁ {n = suc n}) (inl (inr ((suc a , w) , t))) = refl
 Iso.rightInv (breakOut⋁ {n = suc n}) (inl (push (zero , w) i)) = refl
 Iso.rightInv (breakOut⋁ {n = suc n}) (inl (push (suc a , w) i)) = refl
-Iso.rightInv breakOut⋁ (inr x) i = inr x 
+Iso.rightInv breakOut⋁ (inr x) i = inr x
 Iso.rightInv breakOut⋁ (push a i) j = push a i
 Iso.leftInv breakOut⋁ (inl x) i = inl tt
 Iso.leftInv breakOut⋁ (inr ((zero , tt) , t)) i = inr ((0 , tt) , t)
@@ -228,13 +228,13 @@ isConnected⋁↪ {A = A} {B} {n} {m} cA cB =
         (isConnectedComp _ inr (suc (suc n))
           (isEquiv→isConnected _ (isoToIsEquiv cofibInr-⋁) (suc (suc n)))
           (inrConnected (suc (suc n)) _ _
-            (isConnected→isConnectedFun (suc (suc n)) cA))) -- 
+            (isConnected→isConnectedFun (suc (suc n)) cA))) --
              (isEquiv→isConnected _ (snd (symPushout _ _)) (suc (suc n)))
 
-  l1 : (a : _) → Path (Pushout foldL foldR) (inl a) (inr (pt B)) 
+  l1 : (a : _) → Path (Pushout foldL foldR) (inl a) (inr (pt B))
   l1 x = push (inl x)
 
-  l2 : (b : _) → Path (Pushout foldL foldR) (inl (pt A))  (inr b) 
+  l2 : (b : _) → Path (Pushout foldL foldR) (inl (pt A))  (inr b)
   l2 x = push (inr x)
 
   l1≡l2 : l1 (pt A) ≡ l2 (pt B)
@@ -252,7 +252,7 @@ isConnected⋁↪ {A = A} {B} {n} {m} cA cB =
            (λ k j → F _ l2 l1 (sym q) _ l2 j k)
            (λ i j → x) q
            (λ i j →  (l2 ∙ sym l1) j) λ i j → l2 j
- 
+
   H {x = x} = J> (J> (λ k i j →  F' {x = x} (~ k) j i))
 
   PushoutWedge : isContr (Pushout foldL foldR)
@@ -279,9 +279,9 @@ isConnected⋁↪ {A = A} {B} {n} {m} cA cB =
   main = funExt λ { (inl x) → refl
                   ; (inr x) → refl
                   ; (push a i) → refl}
-  
+
 isConnectedPickPetalSwap : {n k : ℕ}
-  → isConnectedFun (suc n +ℕ suc n) (pickPetalSwap {n = suc n} {suc k}) 
+  → isConnectedFun (suc n +ℕ suc n) (pickPetalSwap {n = suc n} {suc k})
 isConnectedPickPetalSwap {n = n} {k = zero} =
   subst (isConnectedFun (suc n +ℕ suc n))
     (funExt (λ x → funExt (m x)))
@@ -305,7 +305,7 @@ isConnectedPickPetalSwap {n = n} {k = suc k} =
     (isConnectedg (isConnectedPickPetalSwap {k = k}))
   where
   module _ {ℓ ℓ' ℓ''} {A : Type ℓ} {A' : Type ℓ'} {B : Type ℓ''}
-    (f : A → A') where 
+    (f : A → A') where
     l : (b : _) → Iso (fiber (map-× f (idfun B)) b) (fiber f (fst b))
     l (a , b) =
       compIso (Σ-cong-iso-snd (λ _ → invIso ΣPathIsoPathΣ))
@@ -360,7 +360,7 @@ isConnectedPickPetalSwap {n = n} {k = suc k} =
     g≡ (inl x) = g≡inl
     g≡ (inr x) = g≡inr x
     g≡ (push x i) y j = g≡inlr x y j i
-  
+
     isConnectedg : isConnectedFun (suc n +ℕ suc n) g
     isConnectedg =
       isConnectedComp (Iso.inv (Fin→BreakOutFirst (suc k))) _ _
@@ -413,7 +413,7 @@ snd (ΠGroupIso fam) = snd (ΠGroupHom λ a → GroupIso→GroupHom (fam a))
   open import Cubical.Axiom.Choice
   open import Cubical.Homotopy.Group.PinSn
   open import Cubical.ZCohomology.Groups.Sn
-  
+
 
   H : (n : ℕ)
     → Iso (π'Gr n ((Fin k → S₊ (suc n)) , (λ _ → ptSn (suc n))) .fst)
@@ -431,7 +431,7 @@ snd (ΠGroupIso fam) = snd (ΠGroupHom λ a → GroupIso→GroupHom (fam a))
     (λ _ _ → isOfHLevelPath 2 (isSetΠ (λ _ → squash₂)) _ _)
     λ f g → funExt λ x → cong ∣_∣₂ (h n f g x))
     where
-    h : (n : ℕ) 
+    h : (n : ℕ)
       → (f g : S₊∙ (suc n) →∙ ((Fin k → S₊ (suc n)) , (λ _ → ptSn (suc n))))
       → (x : _) → Iso.fun (is1 n) (∙Π f g) x
                  ≡ ∙Π (Iso.fun (is1 n) f x) (Iso.fun (is1 n) g x)
@@ -545,7 +545,7 @@ module πCofibBouquetMap (n k m : ℕ) (α : SphereBouquet∙ (suc (suc n)) (Fin
             , (compPath-filler' (λ i → inr (α .snd (~ i))) (sym (push (inl tt)))))
 
   open πLES' inr'
-  
+
   con' : isConnectedFun (suc (suc n +ℕ suc n)) (α∘inr .fst)
   con' = isConnectedComp _ _ _ (isEquiv→isConnected _ (isoToIsEquiv is1) _) isConnected-toPullback
 
@@ -676,7 +676,7 @@ InvIso-ΩS¹Bouquet-FreeGroupPresStr x y =
                  (isOfHLevelPath' 2 (isGroupoidBouquet DiscreteFin) _ _) _ _)
                  λ _ _ → refl
 
-  l1 : (x t : _) → H (x FG.· t) ≡ ST.rec2 squash₂ (λ x y → ∣ x FGrp.· y ∣₂) (H x) (H t) 
+  l1 : (x t : _) → H (x FG.· t) ≡ ST.rec2 squash₂ (λ x y → ∣ x FGrp.· y ∣₂) (H x) (H t)
   l1 x t = cong H (cong₂ FG._·_ (sym (retEq freeGroupTruncIdempotent≃ _))
                                 (sym (retEq freeGroupTruncIdempotent≃ _)))
          ∙ cong H (sym (h (H x) (H t)))
@@ -831,11 +831,11 @@ module presB {m k : ℕ}
 
     toF = Iso.fun sphereBouqetMapIso (Iso.inv CharacBouquet→∙Bouquet f) .fst
 
-  
+
     AbFreeGroup≅𝕫[] : (m : _) → _
     AbFreeGroup≅𝕫[] m = compGroupIso GroupIso-AbelienizeFreeGroup→FreeAbGroup
                             (invGroupIso (ℤFin≅FreeAbGroup m))
-    AbFreeGroup→𝕫[] : (m : _) → _ 
+    AbFreeGroup→𝕫[] : (m : _) → _
     AbFreeGroup→𝕫[] m = GroupIso→GroupHom (AbFreeGroup≅𝕫[] m)
 
     bouquetDegree-AbFreeGroup→𝕫[] : (x : _)
@@ -879,7 +879,7 @@ module presB {m k : ℕ}
         lema base = refl
         lema (loop i) = refl -- refl
 
-        characdiagMain : (w : _) 
+        characdiagMain : (w : _)
           → (λ s → degree (suc zero) (λ x → pickPetal s (l2 w x))) ≡ fst (AbFreeGroup→𝕫[] k) (η w)
         characdiagMain =
           funExt⁻ (cong fst (freeGroupHom≡ {Group = AbGroup→Group ℤ[Fin k ]}
@@ -913,7 +913,7 @@ module presB {m k : ℕ}
             ∙ cong₂ _∙_ (rUnit _) (rUnit _)
 
         characdiag : (s : _) →
-             ℤFinGenerator a a 
+             ℤFinGenerator a a
           ·ℤ degree 1 (λ x → pickPetal s (toF (inr (a , x))))
           ≡ fst (AbFreeGroup→𝕫[] k) (fst pickGens' (η (η a))) s
         characdiag s = cong₂ _·ℤ_ lem refl

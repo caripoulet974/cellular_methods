@@ -1,4 +1,4 @@
-{-# OPTIONS --cubical --lossy-unification #-}
+{-# OPTIONS --cubical --lossy-unification --safe #-}
 module Cubical.cellular-main.Hurewicz.AbPath where
 
 open import Cubical.Foundations.Prelude
@@ -73,7 +73,7 @@ open import Cubical.HITs.Wedge
 
 
 open import Cubical.HITs.SphereBouquet.Degree
-open import Cubical.Algebra.AbGroup.Instances.FreeAbGroup as FAB 
+open import Cubical.Algebra.AbGroup.Instances.FreeAbGroup as FAB
 
 open import Cubical.cellular-main.Hurewicz.random
 
@@ -103,11 +103,11 @@ Iso.fun (·GroupAutomorphismR G g) x = GroupStr._·_ (snd G) x g
 Iso.inv (·GroupAutomorphismR G g) x = GroupStr._·_ (snd G) x (GroupStr.inv (snd G) g)
 Iso.rightInv (·GroupAutomorphismR G g) h =
   sym (GroupStr.·Assoc (snd G) _ _ _)
-  ∙ cong₂ (GroupStr._·_ (snd G)) refl (GroupStr.·InvL (snd G) g) -- 
+  ∙ cong₂ (GroupStr._·_ (snd G)) refl (GroupStr.·InvL (snd G) g) --
   ∙ GroupStr.·IdR (snd G) h
 Iso.leftInv (·GroupAutomorphismR G g) h =
     sym (GroupStr.·Assoc (snd G) _ _ _)
-  ∙ cong₂ (GroupStr._·_ (snd G)) refl (GroupStr.·InvR (snd G) g) -- 
+  ∙ cong₂ (GroupStr._·_ (snd G)) refl (GroupStr.·InvR (snd G) g) --
   ∙ GroupStr.·IdR (snd G) h
 
 open import Cubical.Algebra.Group.Subgroup

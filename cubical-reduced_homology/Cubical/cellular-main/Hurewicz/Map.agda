@@ -1,4 +1,4 @@
-{-# OPTIONS --cubical --lossy-unification #-}
+{-# OPTIONS --cubical --lossy-unification --safe #-}
 module Cubical.cellular-main.Hurewicz.Map where
 
 open import Cubical.cellular-main.Hurewicz.SubcomplexNew

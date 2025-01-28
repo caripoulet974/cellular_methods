@@ -1,4 +1,4 @@
-{-# OPTIONS --cubical --lossy-unification #-}
+{-# OPTIONS --cubical --lossy-unification --safe #-}
 module Cubical.cellular-main.Hurewicz.SphereBouquetCofib2 where
 
 open import Cubical.Foundations.Prelude
@@ -140,7 +140,7 @@ module _ (c1 c2 : ℕ) {n : ℕ} where
   SphereBouquet/α* a (suc m) (eq x₂) (eq x₁) x = inl tt
   SphereBouquet/α* a (suc m) (gt x₂) (eq x₁) x = a (inr (fst x , subst S₊ (cong predℕ x₁) (snd x)))
   SphereBouquet/α* a (suc m) p (gt x₁) x = inl tt
-  
+
 
   SphereBouquet/EqContr* : (α : SphereBouquetMap c1 c2 n) (m : ℕ) (m< : m <ᵗ suc n)
     (p : Trichotomyᵗ m (suc n)) (q : Trichotomyᵗ m (suc (suc n)))
@@ -155,14 +155,14 @@ module _ (c1 c2 : ℕ) {n : ℕ} where
   SphereBouquet/EqContr* a (suc m) m< p (eq x) =
     ⊥.rec (falseDichotomies.lt-eq (m< , (cong predℕ x)))
   SphereBouquet/EqContr* a (suc m) m< p (gt x) = ⊥.rec (¬-suc-n<ᵗn (<ᵗ-trans x m<))
-  
+
 
 
   SphereBouquet/EqBottomMain* : (α : SphereBouquetMap c1 c2 n)
     → SphereBouquet (suc n) (Fin c2)
      ≃ cofib {A = Fin c2 × S₊ n} {B = Fin c2} fst
   SphereBouquet/EqBottomMain* α =
-    isoToEquiv 
+    isoToEquiv
       (compIso (pushoutIso _ _ _ _ (idEquiv _) (idEquiv Unit)
                   (Σ-cong-equiv-snd (λ a → isoToEquiv (IsoSucSphereSusp n)))
                   refl
@@ -218,7 +218,7 @@ module _ (c1 c2 : ℕ) {n : ℕ} where
     ¬m<ᵗm (subst (suc n <ᵗ_) (cong predℕ x₁) ineq)
 
   SphereBouquet/ˢᵏᵉˡConverges : (k : ℕ) (α : SphereBouquetMap c1 c2 n)
-    → suc (suc n) <ᵗ k 
+    → suc (suc n) <ᵗ k
     → (p : _) (q : _)
     → isEquiv {B = Pushout (SphereBouquet/α* α k p q) fst} inl
   SphereBouquet/ˢᵏᵉˡConverges k a ineq p q =
@@ -282,7 +282,7 @@ SphereBouquet/EqBottomMain*Lem {c1 = c1} {c2} zero α {e = e} (push a i) j = lem
   lem : Square (cong (Pushout→Bouquet (suc zero) c2 (λ _ → tt) e)
                  (cong (fst (SphereBouquet/EqBottomMain* c1 c2 α))
                    (push a)))
-               (push a) refl (push a) 
+               (push a) refl (push a)
   lem = cong (cong (Pushout→Bouquet (suc zero) c2 (λ _ → tt) e))
               (cong (cong (Iso.inv (Iso-cofibFst-⋁ λ _ → S₊∙ zero)))
                 (sym (lUnit _)))
@@ -292,7 +292,7 @@ SphereBouquet/EqBottomMain*Lem {c1 = c1} {c2} (suc n) α {e = e} (push a i) j = 
   lem : Square (cong (Pushout→Bouquet (suc (suc n)) c2 (λ _ → tt) e)
                  (cong (fst (SphereBouquet/EqBottomMain* c1 c2 α))
                    (push a)))
-               (push a) refl (push a) 
+               (push a) refl (push a)
   lem = cong (cong (Pushout→Bouquet (suc (suc n)) c2 (λ _ → tt) e))
               (cong (cong (Iso.inv (Iso-cofibFst-⋁ λ _ → S₊∙ (suc n))))
                 (sym (lUnit _)))
@@ -315,7 +315,7 @@ module _ {c1 c2 : ℕ} {n : ℕ} (α : SphereBouquetMap c1 c2 n) where
 
   isCWSphereBouquet/ : isCW (cofib α)
   fst isCWSphereBouquet/ = SphereBouquet/ˢᵏᵉˡ
-  snd isCWSphereBouquet/ = 
+  snd isCWSphereBouquet/ =
     compEquiv (SphereBouquet/FamTopElement* c1 c2 (suc (suc (suc n))) α <ᵗsucm
               ((suc (suc (suc n))) ≟ᵗ (suc (suc n))))
       (isoToEquiv (converges→ColimIso (suc (suc (suc n)))
@@ -437,7 +437,7 @@ module _ {c1 c2 : ℕ} {n : ℕ} (α : SphereBouquetMap c1 c2 n) where
       → F1 x ∘ F2 x ∘ F3 x ∘ F4 x
       ∘ Iso.inv (BouquetIso-gen (suc (suc n)) c1 (λ x₃ → α (inr (fst x₃ , subst (S₊ ∘ suc) x (snd x₃))))
           (SphereBouquet/EqTop** c1 c2 (suc n) α (cong suc x)))
-      ≡ bouquetSusp→ α 
+      ≡ bouquetSusp→ α
     M αpt =
       J> funExt λ { (inl x) → refl
                     ; (inr (x , north)) → refl
@@ -511,7 +511,7 @@ module _ {c1 c2 : ℕ} {n : ℕ} (α : SphereBouquetMap c1 c2 n) where
         → F1 x ∘ F2 x ∘ F3 x ∘ F4 x
         ∘ Iso.inv (BouquetIso-gen (suc (suc n)) c1 (λ x₃ → α (inr (fst x₃ , subst (S₊ ∘ suc) x (snd x₃))))
             (SphereBouquet/EqTop** c1 c2 (suc n) α (cong suc x)))
-        ≡ bouquetSusp→ α 
+        ≡ bouquetSusp→ α
       M αpt =
         J> funExt λ { (inl x) → refl
                       ; (inr (x , north)) → refl
@@ -638,7 +638,7 @@ module _ {c1 c2 : ℕ} {n : ℕ} (α : SphereBouquetMap c1 c2 n) where
 
   open import Cubical.HITs.Sn.Degree
   open import Cubical.Data.Int renaming (_·_ to _*_)
-  
+
 opaque
   inKerAll : {c1 c2 : ℕ} {n : ℕ} (α : SphereBouquetMap c1 c2 n) (k : Fin c2) (t : _)
     → bouquetDegree (preboundary.pre∂ (SphereBouquet/ˢᵏᵉˡ α) n) .fst t ≡ (λ _ → 0)

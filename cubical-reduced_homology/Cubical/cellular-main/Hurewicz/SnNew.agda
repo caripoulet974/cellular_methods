@@ -1,4 +1,4 @@
-{-# OPTIONS --cubical --lossy-unification #-}
+{-# OPTIONS --cubical --lossy-unification --safe #-}
 module Cubical.cellular-main.Hurewicz.SnNew where
 
 open import Cubical.Foundations.Prelude
@@ -77,7 +77,7 @@ module Sgen (n : ℕ) where
   Sfam (suc m) (lt x) = Unit
   Sfam (suc m) (eq x) = S₊ n
   Sfam (suc m) (gt x) = S₊ n
-  
+
   Sfam∙ : (m : ℕ) (s : Trichotomyᵗ (suc m) (suc n)) → Sfam (suc m) s
   Sfam∙ m (lt x) = tt
   Sfam∙ m (eq x) = ptSn n
@@ -107,7 +107,7 @@ Scard n m = ScardGen n m (suc m ≟ᵗ suc n)
 Sα : (n m : ℕ) → Fin (Scard n m) × S⁻ m → Sfam n m
 Sα n m t = SαGen n m (suc m ≟ᵗ suc n) (m ≟ᵗ suc n) t
 
-¬ScardGen : (n m : ℕ) (p : _) → n <ᵗ m → ¬ Fin (ScardGen n m p) 
+¬ScardGen : (n m : ℕ) (p : _) → n <ᵗ m → ¬ Fin (ScardGen n m p)
 ¬ScardGen zero (suc m) p q = ¬Fin0
 ¬ScardGen (suc n) (suc m) (lt x) q = snd
 ¬ScardGen (suc n) (suc m) (eq x) q =
@@ -119,7 +119,7 @@ Sα n m t = SαGen n m (suc m ≟ᵗ suc n) (m ≟ᵗ suc n) t
 
 ¬Scard' : (n : ℕ) → ¬ Fin (Scard (suc (suc n)) (suc n))
 ¬Scard' n x with (n ≟ᵗ suc n)
-... | eq x₁ = ¬m<ᵗm (subst (n <ᵗ_) (sym x₁) <ᵗsucm) 
+... | eq x₁ = ¬m<ᵗm (subst (n <ᵗ_) (sym x₁) <ᵗsucm)
 
 Sfam0 : (m : ℕ) (p : _) → Sgen.Sfam zero (suc m) p ≃ Bool
 Sfam0 m (eq x) = idEquiv _
@@ -137,7 +137,7 @@ snd (isContrSfamGen n m s (eq x)) y = ⊥.rec (¬m<ᵗm (subst (m <ᵗ_) (sym (c
 snd (isContrSfamGen n m s (gt x)) y = ⊥.rec (¬m<ᵗm (<ᵗ-trans x s))
 
 mainIso : (n m : ℕ) (x : n ≡ m) (q : _)
-  → Iso (Susp (S₊ m)) (Pushout {A = Fin 1 × S₊ m} (λ _ → Sgen.Sfam∙ (suc n) m q) fst) 
+  → Iso (Susp (S₊ m)) (Pushout {A = Fin 1 × S₊ m} (λ _ → Sgen.Sfam∙ (suc n) m q) fst)
 Iso.fun (mainIso n m e s) north = inl (Sgen.Sfam∙ (suc n) m s)
 Iso.fun (mainIso n m e s) south = inr fzero
 Iso.fun (mainIso n m e s) (merid a i) = push (fzero , a) i
@@ -190,7 +190,7 @@ SuspSphere→Sphere (suc n) south = south
 SuspSphere→Sphere zero (merid t i) = SuspBool→S¹ (merid t i)
 SuspSphere→Sphere (suc n) (merid a i) = merid a i
 
-IsoSucSphereSusp' : (n : ℕ) → Iso (S₊ (suc n)) (Susp (S₊ n)) 
+IsoSucSphereSusp' : (n : ℕ) → Iso (S₊ (suc n)) (Susp (S₊ n))
 Iso.fun (IsoSucSphereSusp' n) = Iso.fun (IsoSucSphereSusp n)
 Iso.inv (IsoSucSphereSusp' n) = SuspSphere→Sphere n
 Iso.rightInv (IsoSucSphereSusp' zero) north = refl
@@ -252,7 +252,7 @@ fst (snd (snd (Sˢᵏᵉˡ n))) = Sα n
 fst (snd (snd (snd (Sˢᵏᵉˡ n)))) = λ{()}
 snd (snd (snd (snd (Sˢᵏᵉˡ n)))) = SαEq n
 
-SfamTopElement : (n : ℕ) → S₊ n ≃ (Sfam n (suc n)) 
+SfamTopElement : (n : ℕ) → S₊ n ≃ (Sfam n (suc n))
 SfamTopElement n = SfamGenTopElement n (suc n) <ᵗsucm (suc n ≟ᵗ suc n)
 
 SˢᵏᵉˡConverges : (n : ℕ) (k : ℕ)
@@ -300,7 +300,7 @@ module _ (n : ℕ) where
              ∂ (Sˢᵏᵉˡ (suc n)) (suc n) .fst t ≡ λ q → a q - b q)
     → HₙSⁿ→ℤ-fun a ≡ HₙSⁿ→ℤ-fun b
   HₙSⁿ→ℤ-coh a b aker bker r with (n ≟ᵗ n) | (suc n ≟ᵗ n)
-  ... | lt x | t = ⊥.rec (¬m<ᵗm x) 
+  ... | lt x | t = ⊥.rec (¬m<ᵗm x)
   ... | eq x | lt x₁ = ⊥.rec (¬-suc-n<ᵗn x₁)
   ... | eq x | eq x₁ = ⊥.rec (sucn≠n x₁)
   ... | eq x | gt x₁ = sym (+Comm (b fzero) 0
@@ -314,7 +314,7 @@ module _ (n : ℕ) where
     λ a b → PT.elim (λ _ → isSetℤ _ _)
       λ x →  HₙSⁿ→ℤ-coh (fst a) (fst b) (snd a) (snd b) (fst x , cong fst (snd x))
 
-  ∂VanishS : (n : ℕ) (t : _) → ∂ (Sˢᵏᵉˡ (suc n)) n .fst t ≡ λ _ → pos 0 
+  ∂VanishS : (n : ℕ) (t : _) → ∂ (Sˢᵏᵉˡ (suc n)) n .fst t ≡ λ _ → pos 0
   ∂VanishS zero t = funExt λ { (zero , p) → ·Comm (t fzero) (pos 0)}
   ∂VanishS (suc n) t = funExt λ y → ⊥.rec (¬Scard' n y)
 

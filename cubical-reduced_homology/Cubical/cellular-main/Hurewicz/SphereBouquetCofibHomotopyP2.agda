@@ -1,4 +1,4 @@
-{-# OPTIONS --cubical --lossy-unification #-}
+{-# OPTIONS --cubical --lossy-unification --safe #-}
 module Cubical.cellular-main.Hurewicz.SphereBouquetCofibHomotopyP2 where
 
 open import Cubical.Foundations.Prelude
@@ -77,7 +77,7 @@ open import Cubical.HITs.Wedge
 
 
 open import Cubical.HITs.SphereBouquet.Degree
-open import Cubical.Algebra.AbGroup.Instances.FreeAbGroup as FAB 
+open import Cubical.Algebra.AbGroup.Instances.FreeAbGroup as FAB
 
 open import Cubical.cellular-main.Hurewicz.random
 open import Cubical.cellular-main.Hurewicz.AbPath
@@ -146,7 +146,7 @@ agreeOnℤFinGenerator→≡' G {ϕ} {ψ} w =
   {Q : NormalSubgroup (AbGroup→Group ℤ[Fin n ])}
   → (ϕ ψ : GroupHom (AbGroup→Group (ℤ[Fin n ]) / Q ) G)
  → ((k : _) → fst ϕ [ ℤFinGenerator k ] ≡ fst ψ [ ℤFinGenerator k ])
- → ϕ ≡ ψ 
+ → ϕ ≡ ψ
 ℤ[]/-GroupHom≡ G ϕ ψ s = Σ≡Prop (λ _ → isPropIsGroupHom _ _)
   (funExt (SQ.elimProp (λ _ → GroupStr.is-set (snd G) _ _)
     λ x → funExt⁻ (cong fst (agreeOnℤFinGenerator→≡' G
@@ -177,7 +177,7 @@ makeℤ[]/Equiv {n = n} {T = T} ϕ ψ m ind =
 
   altt : compGroupHom (GroupEquiv→GroupHom (invGroupEquiv ϕ)) (GroupEquiv→GroupHom ψ) ≡ m
   altt = Σ≡Prop (λ _ → isPropIsGroupHom _ _)
-    (funExt λ x → 
+    (funExt λ x →
       (sym (funExt⁻ (cong fst (cong (compGroupHom (GroupEquiv→GroupHom (invGroupEquiv ϕ)))
                 (cong (λ X → compGroupHom X (GroupEquiv→GroupHom ψ)) lem))) x))
                 ∙ secEq (fst ψ) _
@@ -267,7 +267,7 @@ private
           ∙ tss l
         where
         tss : (l : _) → Iso.fun (fst (Free/Imα≅ℤ[]/ImBouquetDegree-Lock l)) [ η (η w) ] ≡ [ ℤFinGenerator w ]
-        tss unlock = refl 
+        tss unlock = refl
         rw' : Iso.inv (helpIso-Lock unlock .fst) [ η (η w) ] ≡ πᵃᵇSphereBouquet/Generator toF∙ w
         rw' = cong η' (cong ∣_∣₂
           (ΣPathP (funExt
@@ -292,7 +292,7 @@ private
                    ∙ Iso.rightInv (rIs lock) (πᵃᵇSphereBouquet/Generator toF∙ w)
 
       abstract
-        rIs' : (lock : lockUnit {ℓ-zero}) → GroupIso 
+        rIs' : (lock : lockUnit {ℓ-zero}) → GroupIso
                             (AbGroup→Group ℤ[Fin k ]
                           / ((imSubgroup (bouquetDegree toF))
                           , (isNormalIm _ (λ f g i x → +Comm (f x) (g x) i))))
@@ -438,7 +438,7 @@ Badoo! α ϕ hyp =
 --   (ϕ ψ : GroupHom ((AbGroup→Group (AbelianizationAbGroup (π'Gr n (cofib (fst α) , inl tt))))) G)
 --   (ind : (w : _) → fst ϕ (πᵃᵇSphereBouquet/Generator α w)
 --                   ≡ fst ψ (πᵃᵇSphereBouquet/Generator α w))
---   → ϕ ≡ ψ 
+--   → ϕ ≡ ψ
 -- πSphereBouquet/-GroupHom≡ {n = zero} {m} {k} G α ϕ ψ ind =
 --   lem (Iso.inv (compIso (invIso CharacBouquet→∙Bouquet) sphereBouqetMapIso) α) α
 --       (Iso.rightInv (compIso (invIso CharacBouquet→∙Bouquet) sphereBouqetMapIso) α)
@@ -475,7 +475,7 @@ Badoo! α ϕ hyp =
 --       (ind : (w : _) → fst ϕ (πᵃᵇSphereBouquet/Generator toF∙ w)
 --                       ≡ fst ψ (πᵃᵇSphereBouquet/Generator toF∙ w)) where
 
---       module _ (lock : lockUnit {ℓ-zero}) where 
+--       module _ (lock : lockUnit {ℓ-zero}) where
 --         rIs = (fst (invGroupIso (π'BoquetFunCofib≅Free/Imα>1-Lock lock)))
 --         r = GroupIso→GroupHom (invGroupIso (π'BoquetFunCofib≅Free/Imα>1-Lock lock))
 
@@ -496,7 +496,7 @@ Badoo! α ϕ hyp =
 --           ∙ tss l
 --         where
 --         tss : (l : _) → Iso.fun (fst (Free/Imα≅ℤ[]/ImBouquetDegree-Lock l)) [ η (η w) ] ≡ [ ℤFinGenerator w ]
---         tss unlock = refl 
+--         tss unlock = refl
 --         rw' : Iso.inv (helpIso-Lock unlock .fst) [ η (η w) ] ≡ πᵃᵇSphereBouquet/Generator toF∙ w
 --         rw' = cong η' (cong ∣_∣₂
 --           (ΣPathP (funExt
@@ -519,7 +519,7 @@ Badoo! α ϕ hyp =
 --       mainLemma : (l : _) → ϕ' l ≡ ψ' l
 --       mainLemma l = ℤ[]/-GroupHom≡ _ _ _
 --         λ k → cong (fst ϕ) (presGen⁻ l k) ∙ ind k ∙ sym (cong (fst ψ) (presGen⁻ l k))
-  
+
 --       main : ϕ ≡ ψ
 --       main = Σ≡Prop (λ _ → isPropIsGroupHom _ _)
 --         (funExt λ x → sym (cong (ϕ .fst) (Iso.rightInv (rIs unlock) x))
@@ -532,7 +532,7 @@ Badoo! α ϕ hyp =
 --         (ϕ ψ : GroupHom ((AbGroup→Group (AbelianizationAbGroup (π'Gr zero (cofib (fst α) , inl tt))))) G)
 --         (ind : (w : _) → fst ϕ (πᵃᵇSphereBouquet/Generator α w)
 --                         ≡ fst ψ (πᵃᵇSphereBouquet/Generator α w))
---         → ϕ ≡ ψ 
+--         → ϕ ≡ ψ
 --   lem w = J> (main w)
 -- πSphereBouquet/-GroupHom≡ {n = suc n} {k = k} G α ϕ ψ ind =
 --   Σ≡Prop (λ _ → isPropIsGroupHom _ _)
@@ -619,7 +619,7 @@ Badoo! α ϕ hyp =
 --     altf→ unlock f'' = ∣ (inr ∘ Ω→SphereMap 1 (cong Bouquet→SphereBouquet (Iso.inv Iso-ΩS¹Bouquet-FreeGroup f'')) .fst) , sym (push (inl tt)) ∣₂
 
 --     abstract
-    
+
 --       f'' : FreeGroup (Fin k)
 --       f'' = Iso.fun Iso-ΩS¹Bouquet-FreeGroup (cong SphereBouquet→Bouquet ((SphereMap→Ω 1) f))
 
@@ -651,7 +651,7 @@ Badoo! α ϕ hyp =
 --       Ls : (lock : _) → η' (altf→ lock f')
 --         ≡ Iso.inv (fst (helpIso-Lock lock)) [ η f' ]
 --       Ls unlock = cong η' (cong ∣_∣₂ (ΣPathP (funExt (λ { base → refl ; (loop i) → refl}) , lUnit _)))
---              ∙ funExt⁻ η'≡ _ 
+--              ∙ funExt⁻ η'≡ _
 
 
 --       LsPre : (lock : _) (x : _) (y : _) → Iso.inv (fst (helpIso-Lock lock)) x ≡ y

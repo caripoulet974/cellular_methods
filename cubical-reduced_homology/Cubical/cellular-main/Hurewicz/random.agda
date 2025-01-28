@@ -1,4 +1,4 @@
-{-# OPTIONS --cubical --lossy-unification #-}
+{-# OPTIONS --cubical --lossy-unification --safe #-}
 module Cubical.cellular-main.Hurewicz.random where
 
 open import Cubical.Foundations.Prelude
@@ -1230,7 +1230,7 @@ subComplexHomologyEquiv≡ C m n q =
            snd (snd (snd (snd (snd C))) n) .equiv-proof (inl x) .fst .fst
     mmmain zero x₂ x = ⊥.rec (C .snd .snd .snd .fst x)
     mmmain (suc n) x₂ x = cong (CW↪ C (suc n)) (transportRefl x)
-    
+
     mm : (n : ℕ) (P : _) (Q : _) (x : _)
       → subComplexMapGen.subComplex→map' C n (suc n) P
           (invEq (G.subComplexFam≃Pushout C n n Q P) (inl x))
@@ -1253,7 +1253,7 @@ subComplexHomologyEquiv≡ C m n q =
       ... | gt x = ⊥.rec (¬m<ᵗm x)
     mm n P (gt x₁) x = ⊥.rec (¬m<ᵗm x₁)
     -- main : (n : ℕ) (x : subComplexFam C (suc (suc (suc n))) (suc (suc (suc (suc n)))))
-    --     → ? ≡ 
+    --     → ? ≡
     -- main = ?
   ... | gt x = ⊥.rec (¬squeeze (q , x))
   {- →FinSeqColimHomotopy _ _ λ x → CW↑Gen≡ C (suc (suc (suc (suc n)))) (suc m) (suc m ≟ᵗ suc (suc (suc (suc (suc n))))) p _

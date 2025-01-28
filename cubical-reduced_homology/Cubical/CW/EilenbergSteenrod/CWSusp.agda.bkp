@@ -1,0 +1,139 @@
+{-# OPTIONS --cubical --allow-unsolved-metas #-}
+module EilenbergSteenrod.CWSusp where
+
+open import Cubical.Foundations.Prelude
+open import Cubical.Foundations.Equiv
+open import Cubical.Foundations.Function
+open import Cubical.Foundations.Isomorphism
+
+open import Cubical.CW.Base
+
+open import Cubical.Data.Empty
+open import Cubical.Data.Nat renaming (_+_ to _+ℕ_)
+open import Cubical.Data.NatMinusOne
+open import Cubical.Data.Nat.Order
+open import Cubical.Data.Bool
+open import Cubical.Data.Fin.Inductive.Base
+open import Cubical.Data.Sigma
+open import Cubical.Data.Sequence
+open import Cubical.Data.FinSequence
+
+open import Cubical.HITs.S1
+open import Cubical.HITs.Sn
+open import Cubical.HITs.Pushout
+open import Cubical.HITs.Susp
+open import Cubical.HITs.SequentialColimit
+open import Cubical.HITs.SphereBouquet
+open import Cubical.HITs.PropositionalTruncation as PT
+
+open import EilenbergSteenrod.Utils
+
+private
+  variable
+    ℓ : Level
+
+
+module _ (ℓ : Level) (C : CWskel ℓ) where
+  open CWskel-fields
+
+  suspA : (ℕ → Type ℓ) → ℕ → Type ℓ
+  suspA A zero = A zero
+  suspA A (suc n) = Susp (A n)
+
+  suspCells : (ℕ → ℕ) → ℕ → ℕ
+  suspCells a zero = 2
+  suspCells a (suc n) = a n
+
+  -- suspMap is split in several functions because of the ad-hoc definition of S⁻
+  suspMap₀ : Fin (suspCells (card C) 0) × (S⁻ 0) → suspA (fst C) 0
+  suspMap₀ ()
+
+  suspMap₁ : Fin (suspCells (card C) 1) × (S⁻ 1) → suspA (fst C) 1
+  suspMap₁ (a , false) = north
+  suspMap₁ (a , true) = south
+
+  suspMapₛ : (n : ℕ) → Fin (suspCells (card C) (suc n)) × (Susp (S⁻ n)) → suspA (fst C) (suc n)
+  suspMapₛ n (a , north) = north
+  suspMapₛ n (a , south) = south
+  suspMapₛ n (a , merid x i) = merid (α C n (a , x)) i
+
+  suspMap : (n : ℕ) → Fin (suspCells (card C) n) × (S⁻ n) → suspA (fst C) n
+  suspMap zero = suspMap₀
+  suspMap 1 (a , x) = suspMapₛ 0 (a , {!!})
+  suspMap (suc (suc n)) (a , x) = suspMapₛ (suc n) (a , Iso.fun (IsoSucSphereSusp n) x)
+
+  -- same for suspIso
+  suspIso₀ : Iso (Susp (fst C 0)) (Pushout (suspMap₀) fst)
+  Iso.fun suspIso₀ north = inr fzero
+  Iso.fun suspIso₀ south = inr (fsuc fzero)
+  Iso.fun suspIso₀ (merid a i) with (C .snd .snd .snd .fst a)
+  Iso.fun suspIso₀ (merid a i) | ()
+  Iso.inv suspIso₀ (inl a) with (C .snd .snd .snd .fst a)
+  Iso.inv suspIso₀ (inl a) | ()
+  Iso.inv suspIso₀ (inr (zero , xe)) = north
+  Iso.inv suspIso₀ (inr (suc zero , xe)) = south
+  Iso.rightInv suspIso₀ (inl a) with (C .snd .snd .snd .fst a)
+  Iso.rightInv suspIso₀ (inl a) | ()
+  Iso.rightInv suspIso₀ (inr (zero , tt)) = refl
+  Iso.rightInv suspIso₀ (inr (suc zero , tt)) = refl
+  Iso.leftInv suspIso₀ north = refl
+  Iso.leftInv suspIso₀ south = refl
+  Iso.leftInv suspIso₀ (merid a i) with (C .snd .snd .snd .fst a)
+  Iso.leftInv suspIso₀ (merid a i) | ()
+
+  suspEquiv₀ : Susp (fst C 0) ≃ Pushout (suspMap₀) fst
+  suspEquiv₀ = isoToEquiv suspIso₀
+
+  -- alternatively, this is an instance of 3×3
+  suspIsoₛ : (n : ℕ) → Iso (Susp (Pushout (α C n) fst)) (Pushout (suspMapₛ n) fst)
+  Iso.fun (suspIsoₛ n) north = inl north
+  Iso.fun (suspIsoₛ n) south = inl south
+  Iso.fun (suspIsoₛ n) (merid (inl x) i) = inl (merid x i)
+  Iso.fun (suspIsoₛ n) (merid (inr a) i) = ((push (a , north)) ∙∙ refl ∙∙ (sym (push (a , south)))) i
+  Iso.fun (suspIsoₛ n) (merid (push (a , x) j) i) =
+    hcomp (λ k → λ { (i = i0) → push (a , north) (j ∧ (~ k))
+                   ; (i = i1) → push (a , south) (j ∧ (~ k))
+                   ; (j = i0) → inl (merid (α C n (a , x)) i)
+                   ; (j = i1) → doubleCompPath-filler (push (a , north)) refl (sym (push (a , south))) k i })
+          (push (a , merid x i) j)
+  Iso.inv (suspIsoₛ n) (inl north) = north
+  Iso.inv (suspIsoₛ n) (inl south) = south
+  Iso.inv (suspIsoₛ n) (inl (merid x i)) = merid (inl x) i
+  Iso.inv (suspIsoₛ n) (inr a) = south
+  Iso.inv (suspIsoₛ n) (push (a , north) i) = merid (inr a) i
+  Iso.inv (suspIsoₛ n) (push (a , south) i) = south
+  Iso.inv (suspIsoₛ n) (push (a , merid x j) i) =
+    hcomp (λ k → λ { (i = i0) → merid (inl (α C n (a , x))) j
+                   ; (i = i1) → merid (inr a) (j ∨ k)
+                   ; (j = i0) → merid (inr a) (i ∧ k)
+                   ; (j = i1) → south })
+          (merid (push (a , x) i) j)
+  Iso.rightInv (suspIsoₛ n) (inl north) = refl
+  Iso.rightInv (suspIsoₛ n) (inl south) = refl
+  Iso.rightInv (suspIsoₛ n) (inl (merid a i)) = refl
+  Iso.rightInv (suspIsoₛ n) (inr a) t = push (a , south) t
+  Iso.rightInv (suspIsoₛ n) (push (a , north) i) t = {!!}
+  Iso.rightInv (suspIsoₛ n) (push (a , south) i) t = push (a , south) (i ∧ t)
+  Iso.rightInv (suspIsoₛ n) (push (a , merid x j) i) t =
+    hcomp (λ k → λ { (i = i0) → {!!}
+                   ; (i = i1) → {!!}
+                   ; (j = i0) → {!!}
+                   ; (j = i1) → push (a , south) (i ∧ t)
+                   ; (t = i0) → {!!}
+                   ; (t = i1) → {!!} })
+          {!!}
+  Iso.leftInv (suspIsoₛ n) = {!!}
+
+  suspEquivₛ : (n : ℕ) → Susp (fst C (suc n)) ≃ Pushout (suspMapₛ n) fst
+  suspEquivₛ n = {!!}
+
+-- Susp (fst C (suc n))
+-- = PushoutSusp (fst C (suc n))
+-- = Pushout (pushoutSuspMapₛ n) fst
+
+
+  -- là essentiellement on veut un iso entre la suspension du pushout et le pushout des suspensions
+  -- on peut faire ça avec le lemme 3x3, si nécessaire...
+
+-- suspSkel : CWskel ℓ → CWskel ℓ
+-- suspSkel C = suspA (fst C) , (suspCells (card C) , suspMap , (C .snd .snd .snd .fst) , {!!})
